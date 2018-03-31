@@ -1,3 +1,4 @@
+/* global google */
 function initMap() {
     var pointA = new google.maps.LatLng(53.3163803, -6.2676661),
         pointB = new google.maps.LatLng(54.6346071, -5.9392891),
@@ -7,8 +8,9 @@ function initMap() {
         pointF = new google.maps.LatLng(51.7500401, -9.5609772),
         pointG = new google.maps.LatLng(52.6591599, -7.2587127),
         pointH = new google.maps.LatLng(53.3569955, -6.258424),
+        pointI = new google.maps.LatLng(52.9713331, -9.4322302),
         myOptions = {
-            zoom: 3,
+            zoom: 7,
             center: pointA
         },
         map = new google.maps.Map(document.getElementById('map-canvas'), myOptions),
@@ -63,27 +65,46 @@ function initMap() {
             title: "point H",
             label: "H",
             map: map
+        }),
+        markerI = new google.maps.Marker({
+            position: pointI,
+            title: "Cliffs of Moher",
+            map: map
+        }),
+        infowindowI = new google.maps.InfoWindow({
+            content: 'https://www.cliffsofmoher.ie/'
         });
+        markerI.addListener('click', function() {
+            infowindowI.open(map, markerI);
+        });
+        calculateAndDisplayRoute(directionsService, map, pointA, pointB);
+        calculateAndDisplayRoute(directionsService, map, pointB, pointC);
+        calculateAndDisplayRoute(directionsService, map, pointC, pointD);
+        calculateAndDisplayRoute(directionsService, map, pointD, pointE);
+        calculateAndDisplayRoute(directionsService, map, pointE, pointF);
+        calculateAndDisplayRoute(directionsService, map, pointF, pointG);
+        calculateAndDisplayRoute(directionsService, map, pointG, pointH);
+      }
 
-    // get route from A to B
-    calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB);
-    // calculateAndDisplayRoute(directionsService, directionsDisplay, pointB, pointC);
-}
-
-function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
-    directionsService.route({
-        origin: pointA,
-        destination: pointB,
-        avoidTolls: false,
-        avoidHighways: false,
-        travelMode: google.maps.TravelMode.DRIVING
-    }, function (response, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
+      function calculateAndDisplayRoute(directionsService, map, pointA, pointB) {
+        directionsService.route({
+          origin: pointA,
+          destination: pointB,
+          avoidTolls: false,
+          avoidHighways: false,
+          travelMode: google.maps.TravelMode.DRIVING
+        }, function(response, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            var directionsDisplay = new google.maps.DirectionsRenderer({
+              map: map,
+              suppressMarkers: true,
+              preserveViewport: true
+            });
             directionsDisplay.setDirections(response);
-        } else {
+          } else {
             console.error('Directions request failed due to ' + status);
-        }
-    });
-}
+          }
+        });
+      }
 
-initMap();
+      initMap();
